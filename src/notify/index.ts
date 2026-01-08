@@ -19,8 +19,10 @@ export async function sendNotification(
   const promises: Promise<boolean>[] = [];
 
   // Email notification
+  console.log('[debug] notify.email:', notify.email);
   if (notify.email) {
     const recipients = Array.isArray(notify.email) ? notify.email : [];
+    console.log('[debug] email recipients:', recipients);
     if (recipients.length > 0) {
       promises.push(sendEmail(message, recipients));
     }
