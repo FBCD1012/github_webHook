@@ -143,11 +143,15 @@ export async function sendEmail(
     return false;
   }
 
+  // 邮件主题：只用 commit 第一行
+  const commitFirstLine = message.details.split('\n')[0] || message.title;
+  const subject = `[${message.repo}] ${commitFirstLine}`;
+
   try {
     await transport.sendMail({
       from: env.emailFrom,
       to: recipients.join(', '),
-      subject: `[${message.repo}] ${message.title}`,
+      subject,
       html: buildEmailHtml(message),
     });
 
