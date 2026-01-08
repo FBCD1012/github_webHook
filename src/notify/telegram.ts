@@ -34,7 +34,7 @@ function buildTelegramMessage(message: NotificationMessage): string {
     `👤 作者: ${escapeHtml(message.author)}`,
     '',
     `📝 说明:`,
-    escapeHtml(truncate(message.details.split('\n')[0], 200)),
+    `<i>${escapeHtml(truncate(message.details.split('\n')[0], 200))}</i>`,
   ];
 
   // Add file changes with italic style
