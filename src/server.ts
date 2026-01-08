@@ -43,10 +43,10 @@ export function startServer() {
   const app = createServer();
 
   app.listen(env.port, () => {
-    console.log('🌐 服务已启动:');
-    console.log(`   本地: http://localhost:${env.port}`);
-    console.log(`   Webhook: http://localhost:${env.port}/webhook`);
-    console.log(`   健康检查: http://localhost:${env.port}/health`);
-    console.log('\n⏳ 等待 GitHub Webhook 事件...\n');
+    console.log('[+] 服务已启动:');
+    console.log(`    本地: http://localhost:${env.port}`);
+    console.log(`    Webhook: http://localhost:${env.port}/webhook`);
+    console.log(`    健康检查: http://localhost:${env.port}/health`);
+    console.log('\n[~] 等待 GitHub Webhook 事件...\n');
   });
 }
