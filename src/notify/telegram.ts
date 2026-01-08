@@ -18,6 +18,7 @@ function getBot(): TelegramBot | null {
 
 /**
  * Build Telegram message with HTML format (Chinese)
+ * 构建 Telegram 消息（HTML 格式）
  */
 function buildTelegramMessage(message: NotificationMessage): string {
   const eventText = {
