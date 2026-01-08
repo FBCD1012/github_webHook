@@ -26,6 +26,9 @@ function buildTelegramMessage(message: NotificationMessage): string {
     branch_delete: '分支删除',
   }[message.eventType];
 
+  // 只取第一行作为说明
+  const commitTitle = message.details.split('\n')[0];
+
   const lines: string[] = [
     `📦 <b>${eventText}</b>`,
     '',
@@ -34,7 +37,7 @@ function buildTelegramMessage(message: NotificationMessage): string {
     `👤 作者: ${escapeHtml(message.author)}`,
     '',
     `📝 说明:`,
-    `<i>${escapeHtml(truncate(message.details.split('\n')[0], 200))}</i>`,
+    `<i>${escapeHtml(commitTitle)}</i>`,
   ];
 
   // Add file changes with italic style

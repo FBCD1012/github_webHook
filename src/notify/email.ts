@@ -38,8 +38,11 @@ function buildEmailHtml(message: NotificationMessage): string {
     branch_delete: { text: '分支删除', color: '#cf222e' },
   }[message.eventType] || { text: '事件通知', color: '#6e7781' };
 
-  // 只取第一行作为标题
-  const commitTitle = message.details.split('\n')[0];
+  // 将换行转为 <br>，只保留主要内容（去掉生成信息）
+  const commitMsg = message.details
+    .split('\n')
+    .filter(line => !line.includes('Generated with') && !line.includes('Co-Authored-By'))
+    .join('<br>');
 
   let filesHtml = '';
   if (message.files) {
@@ -83,7 +86,7 @@ function buildEmailHtml(message: NotificationMessage): string {
 
       <!-- 提交信息 -->
       <div style="background: #f6f8fa; padding: 16px; border-radius: 8px; border-left: 4px solid ${eventConfig.color};">
-        <div style="font-size: 15px; color: #24292f; font-weight: 500;">${commitTitle}</div>
+        <div style="font-size: 15px; color: #24292f; line-height: 1.6;">${commitMsg}</div>
       </div>
 
       <!-- 详细信息 -->
