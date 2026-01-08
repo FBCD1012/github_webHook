@@ -11,27 +11,11 @@ defaults:
 
 # Multi-repository monitoring configuration
 monitors:
-  # Example: Frontend project
-  - repo: "myorg/frontend-app"
-    files:
-      - pattern: "src/**/*.tsx"
-      - pattern: "package.json"
-    notify:
-      email:
-        - frontend-team@example.com
-      telegram:
-        chatId: "-100123456789"
-
-  # Example: Backend project
-  - repo: "myorg/backend-api"
+  # Your GitHub webhook project
+  - repo: "FBCD1012/github_webHook"
     events:
       push: true
       branch: true
-    files:
-      - pattern: "src/**/*.ts"
-      - pattern: "prisma/schema.prisma"
+    # 不配置 files 则监控所有文件
     notify:
-      email:
-        - backend-team@example.com
-      telegram:
-        chatId: "-100987654321"
+      telegram: true
