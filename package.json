@@ -1,0 +1,28 @@
+{
+  "name": "git-webhook-monitor",
+  "version": "1.0.0",
+  "description": "Git webhook monitor with multi-repo support",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target node"
+  },
+  "keywords": ["git", "webhook", "monitor", "github"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.7",
+    "node-telegram-bot-api": "^0.66.0",
+    "yaml": "^2.3.4",
+    "minimatch": "^9.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "@types/express": "^4.17.21",
+    "@types/nodemailer": "^6.4.14",
+    "@types/node-telegram-bot-api": "^0.64.1"
+  }
+}

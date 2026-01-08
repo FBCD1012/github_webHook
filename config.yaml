@@ -1,0 +1,37 @@
+# Git Webhook Monitor Configuration
+
+# Global defaults (applied to all repos unless overridden)
+defaults:
+  events:
+    push: true
+    branch: true
+  notify:
+    telegram: true
+    email: false
+
+# Multi-repository monitoring configuration
+monitors:
+  # Example: Frontend project
+  - repo: "myorg/frontend-app"
+    files:
+      - pattern: "src/**/*.tsx"
+      - pattern: "package.json"
+    notify:
+      email:
+        - frontend-team@example.com
+      telegram:
+        chatId: "-100123456789"
+
+  # Example: Backend project
+  - repo: "myorg/backend-api"
+    events:
+      push: true
+      branch: true
+    files:
+      - pattern: "src/**/*.ts"
+      - pattern: "prisma/schema.prisma"
+    notify:
+      email:
+        - backend-team@example.com
+      telegram:
+        chatId: "-100987654321"
