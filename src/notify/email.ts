@@ -19,6 +19,9 @@ function getTransporter(): Transporter | null {
         user: env.smtp.user,
         pass: env.smtp.pass,
       },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
   }
 
