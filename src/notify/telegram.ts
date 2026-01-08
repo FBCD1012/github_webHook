@@ -17,67 +17,72 @@ function getBot(): TelegramBot | null {
 }
 
 /**
- * Build Telegram message with simple text (no Markdown)
+ * Build Telegram message with HTML format (Chinese)
  */
 function buildTelegramMessage(message: NotificationMessage): string {
-  const eventEmoji = {
-    push: '📦',
-    branch_create: '🌱',
-    branch_delete: '🗑️',
+  const eventText = {
+    push: '新提交推送',
+    branch_create: '分支创建',
+    branch_delete: '分支删除',
   }[message.eventType];
 
   const lines: string[] = [
-    `${eventEmoji} ${message.title}`,
+    `📦 <b>${eventText}</b>`,
     '',
-    `📁 Repo: ${message.repo}`,
-    `🌿 Branch: ${message.branch}`,
-    `👤 Author: ${message.author}`,
+    `📁 仓库: ${escapeHtml(message.repo)}`,
+    `🌿 分支: ${escapeHtml(message.branch)}`,
+    `👤 作者: ${escapeHtml(message.author)}`,
     '',
-    `📝 Details:`,
-    truncate(message.details, 500),
+    `📝 说明:`,
+    escapeHtml(truncate(message.details.split('\n')[0], 200)),
   ];
 
-  // Add file changes
+  // Add file changes with italic style
   if (message.files) {
     const { added, modified, removed } = message.files;
     const totalFiles = added.length + modified.length + removed.length;
 
     if (totalFiles > 0) {
-      lines.push('', `📄 Changed Files (${totalFiles}):`);
+      lines.push('', `📄 变更文件 (${totalFiles}):`);
 
       const maxFiles = 10;
       let shown = 0;
 
       for (const f of added.slice(0, maxFiles - shown)) {
-        lines.push(`+ ${f}`);
+        lines.push(`<i>+ ${escapeHtml(f)}</i>`);
         shown++;
       }
       for (const f of modified.slice(0, maxFiles - shown)) {
-        lines.push(`~ ${f}`);
+        lines.push(`<i>~ ${escapeHtml(f)}</i>`);
         shown++;
       }
       for (const f of removed.slice(0, maxFiles - shown)) {
-        lines.push(`- ${f}`);
+        lines.push(`<i>- ${escapeHtml(f)}</i>`);
         shown++;
       }
 
       if (totalFiles > maxFiles) {
-        lines.push(`... and ${totalFiles - maxFiles} more files`);
+        lines.push(`<i>... 还有 ${totalFiles - maxFiles} 个文件</i>`);
       }
     }
   }
 
-  // Add matched patterns
-  if (message.matchedPatterns && message.matchedPatterns.length > 0) {
-    lines.push('', `🎯 Matched: ${message.matchedPatterns.join(', ')}`);
-  }
-
   // Add link
   if (message.url) {
-    lines.push('', `🔗 ${message.url}`);
+    lines.push('', `🔗 <a href="${message.url}">查看详情</a>`);
   }
 
   return lines.join('\n');
+}
+
+/**
+ * Escape HTML special characters
+ */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 /**
@@ -118,6 +123,7 @@ export async function sendTelegram(
 
   try {
     await telegramBot.sendMessage(targetChatId, buildTelegramMessage(message), {
+      parse_mode: 'HTML',
       disable_web_page_preview: true,
     });
 
