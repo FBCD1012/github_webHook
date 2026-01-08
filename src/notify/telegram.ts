@@ -17,7 +17,7 @@ function getBot(): TelegramBot | null {
 }
 
 /**
- * Build Telegram message with Markdown formatting
+ * Build Telegram message with simple text (no Markdown)
  */
 function buildTelegramMessage(message: NotificationMessage): string {
   const eventEmoji = {
@@ -27,16 +27,14 @@ function buildTelegramMessage(message: NotificationMessage): string {
   }[message.eventType];
 
   const lines: string[] = [
-    `${eventEmoji} *${escapeMarkdown(message.title)}*`,
+    `${eventEmoji} ${message.title}`,
     '',
-    `📁 *Repo:* [${escapeMarkdown(message.repo)}](${message.repoUrl})`,
-    `🌿 *Branch:* \`${escapeMarkdown(message.branch)}\``,
-    `👤 *Author:* ${escapeMarkdown(message.author)}`,
+    `📁 Repo: ${message.repo}`,
+    `🌿 Branch: ${message.branch}`,
+    `👤 Author: ${message.author}`,
     '',
-    `📝 *Details:*`,
-    `\`\`\``,
-    escapeMarkdown(truncate(message.details, 500)),
-    `\`\`\``,
+    `📝 Details:`,
+    truncate(message.details, 500),
   ];
 
   // Add file changes
@@ -45,38 +43,38 @@ function buildTelegramMessage(message: NotificationMessage): string {
     const totalFiles = added.length + modified.length + removed.length;
 
     if (totalFiles > 0) {
-      lines.push('', `📄 *Changed Files (${totalFiles}):*`);
+      lines.push('', `📄 Changed Files (${totalFiles}):`);
 
       const maxFiles = 10;
       let shown = 0;
 
       for (const f of added.slice(0, maxFiles - shown)) {
-        lines.push(`\\+ \`${escapeMarkdown(f)}\``);
+        lines.push(`+ ${f}`);
         shown++;
       }
       for (const f of modified.slice(0, maxFiles - shown)) {
-        lines.push(`~ \`${escapeMarkdown(f)}\``);
+        lines.push(`~ ${f}`);
         shown++;
       }
       for (const f of removed.slice(0, maxFiles - shown)) {
-        lines.push(`\\- \`${escapeMarkdown(f)}\``);
+        lines.push(`- ${f}`);
         shown++;
       }
 
       if (totalFiles > maxFiles) {
-        lines.push(`_\\.\\.\\. and ${totalFiles - maxFiles} more files_`);
+        lines.push(`... and ${totalFiles - maxFiles} more files`);
       }
     }
   }
 
   // Add matched patterns
   if (message.matchedPatterns && message.matchedPatterns.length > 0) {
-    lines.push('', `🎯 *Matched:* ${message.matchedPatterns.map((p) => `\`${escapeMarkdown(p)}\``).join(', ')}`);
+    lines.push('', `🎯 Matched: ${message.matchedPatterns.join(', ')}`);
   }
 
   // Add link
   if (message.url) {
-    lines.push('', `[View on GitHub →](${message.url})`);
+    lines.push('', `🔗 ${message.url}`);
   }
 
   return lines.join('\n');
@@ -120,7 +118,6 @@ export async function sendTelegram(
 
   try {
     await telegramBot.sendMessage(targetChatId, buildTelegramMessage(message), {
-      parse_mode: 'MarkdownV2',
       disable_web_page_preview: true,
     });
 
