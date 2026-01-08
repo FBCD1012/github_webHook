@@ -26,13 +26,13 @@ function getTransporter(): Transporter | null {
 }
 
 /**
- * Build HTML email content
+ * Build HTML email content (Chinese)
  */
 function buildEmailHtml(message: NotificationMessage): string {
-  const eventEmoji = {
-    push: '📦',
-    branch_create: '🌱',
-    branch_delete: '🗑️',
+  const eventText = {
+    push: '📦 新提交推送',
+    branch_create: '🌱 分支创建',
+    branch_delete: '🗑️ 分支删除',
   }[message.eventType];
 
   let filesHtml = '';
@@ -40,13 +40,13 @@ function buildEmailHtml(message: NotificationMessage): string {
     const { added, modified, removed } = message.files;
     const fileItems: string[] = [];
 
-    added.forEach((f) => fileItems.push(`<li style="color: #22863a;">+ ${f}</li>`));
-    modified.forEach((f) => fileItems.push(`<li style="color: #b08800;">~ ${f}</li>`));
-    removed.forEach((f) => fileItems.push(`<li style="color: #cb2431;">- ${f}</li>`));
+    added.forEach((f) => fileItems.push(`<li style="color: #22863a; font-style: italic;">+ ${f}</li>`));
+    modified.forEach((f) => fileItems.push(`<li style="color: #b08800; font-style: italic;">~ ${f}</li>`));
+    removed.forEach((f) => fileItems.push(`<li style="color: #cb2431; font-style: italic;">- ${f}</li>`));
 
     if (fileItems.length > 0) {
       filesHtml = `
-        <h3>Changed Files:</h3>
+        <h3>📄 变更文件:</h3>
         <ul style="font-family: monospace; font-size: 12px;">
           ${fileItems.join('\n')}
         </ul>
@@ -54,21 +54,13 @@ function buildEmailHtml(message: NotificationMessage): string {
     }
   }
 
-  let patternsHtml = '';
-  if (message.matchedPatterns && message.matchedPatterns.length > 0) {
-    patternsHtml = `
-      <p style="color: #666; font-size: 12px;">
-        Matched patterns: ${message.matchedPatterns.map((p) => `<code>${p}</code>`).join(', ')}
-      </p>
-    `;
-  }
-
   return `
     <!DOCTYPE html>
     <html>
     <head>
+      <meta charset="UTF-8">
       <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { background: #24292e; color: white; padding: 15px; border-radius: 6px 6px 0 0; }
         .content { background: #f6f8fa; padding: 20px; border-radius: 0 0 6px 6px; }
@@ -79,17 +71,16 @@ function buildEmailHtml(message: NotificationMessage): string {
     <body>
       <div class="container">
         <div class="header">
-          <h2>${eventEmoji} ${message.title}</h2>
+          <h2>${eventText}</h2>
         </div>
         <div class="content">
-          <p><strong>Repository:</strong> <a href="${message.repoUrl}">${message.repo}</a></p>
-          <p><strong>Branch:</strong> ${message.branch}</p>
-          <p><strong>Author:</strong> ${message.author}</p>
-          <p><strong>Details:</strong></p>
+          <p><strong>📁 仓库:</strong> <a href="${message.repoUrl}">${message.repo}</a></p>
+          <p><strong>🌿 分支:</strong> ${message.branch}</p>
+          <p><strong>👤 作者:</strong> ${message.author}</p>
+          <p><strong>📝 说明:</strong></p>
           <pre style="background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">${message.details}</pre>
           ${filesHtml}
-          ${patternsHtml}
-          ${message.url ? `<p><a href="${message.url}">View on GitHub →</a></p>` : ''}
+          ${message.url ? `<p><a href="${message.url}">🔗 查看详情 →</a></p>` : ''}
         </div>
       </div>
     </body>
