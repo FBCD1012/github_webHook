@@ -19,3 +19,5 @@ monitors:
     # 不配置 files 则监控所有文件
     notify:
       telegram: true
+      email:
+        - 745098947@qq.com
